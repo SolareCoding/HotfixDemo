@@ -1,5 +1,7 @@
 ## 如何使用
 
+学习：https://www.jianshu.com/p/b65e5da3dff2
+
 修改代码后，手动使用build-tools里的dx工具将修改类对应的class文件转成dex文件。（本项目里已经放好了一个classes2.dex文件）
 把修复包放到Environment.getExternalStorageDirectory()对应的文件夹下。
 App中直接点击Show会显示Bug。
@@ -9,3 +11,5 @@ Android10以上运行无效。
 
 ## 原理
 类替换。将修复包中的类加载出来，放到dexElements首部。这样在加载错误类时，首先会加载到修复包里的类。
+具体实现见HotFix类。
+
