@@ -15,7 +15,7 @@ public final class HotFix {
      * 修复指定的类
      *
      * @param context        上下文对象
-     * @param fixDexFilePath   修复的dex文件路径
+     * @param fixDexFilePath   修复的dex文件路径，包含dex文件名
      */
     public static void fixDexFile(Context context, String fixDexFilePath) {
         if (fixDexFilePath != null && new File(fixDexFilePath).exists()) {
@@ -36,15 +36,19 @@ public final class HotFix {
      */
     private static void injectDexToClassLoader(Context context, String fixDexFilePath)
             throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        //读取 baseElements
+
+        // 这里获取了原有的dex列表
         PathClassLoader pathClassLoader = (PathClassLoader) context.getClassLoader();
         Object basePathList = getPathList(pathClassLoader);
+        // 从PathList里获取dexElements数组
         Object baseElements = getDexElements(basePathList);
 
         //读取 fixElements
         String baseDexAbsolutePath = context.getDir("dex", 0).getAbsolutePath();
+        // 实例化一个DexClassLoader
         DexClassLoader fixDexClassLoader = new DexClassLoader(
                 fixDexFilePath, baseDexAbsolutePath, fixDexFilePath, context.getClassLoader());
+        // 获取补丁包里的dexElements列表
         Object fixPathList = getPathList(fixDexClassLoader);
         Object fixElements = getDexElements(fixPathList);
 
@@ -85,6 +89,8 @@ public final class HotFix {
         return getField(obj, obj.getClass(), "dexElements");
     }
 
+    // 通过反射从一个类里获取成员变量，str是成员变量的名字
+    // 把返回这个成员变量的值
     private static Object getField(Object obj, Class cls, String str)
             throws NoSuchFieldException, IllegalAccessException {
         Field declaredField = cls.getDeclaredField(str);
